@@ -213,6 +213,8 @@ footer {
   position: relative;
   z-index: 10;
   margin-top: auto; /* Sticks to bottom when main-page is flex */
+  /* Add this to ensure it stays at viewport bottom */
+  flex-shrink: 0; /* Prevents footer from shrinking */
 }
 
 .footer-content {
