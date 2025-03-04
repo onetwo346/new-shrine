@@ -1,338 +1,255 @@
-/* styles.css */
-/* Design by Kofi Fosu | cosmoscoderr@gmail.com */
+// script.js
+// Design by Kofi Fosu | cosmoscoderr@gmail.com
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+const books = [
+  { title: "Whispers of the Heart", author: "Kofi Fosu", description: "A classic romance full of passion.", filePath: "Whispers-of-the-Heart.pdf" },
+  { title: "Ancestors Hammer", author: "Kofi Fosu", description: "Fantasy Adventure.", filePath: "ancestor-hammer.pdf" },
+  { title: "Deeper than Ocean", author: "Kofi Fosu", description: "Romance.", filePath: "Deeper-than-Ocean.pdf" },
+  { title: "Heaven Bound (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "heaven-bound.pdf" },
+  { title: "Heaven Bound (Book 2)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "heaven-bound2.pdf" },
+  { title: "The Last Echo (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "The-Last-echo.pdf" },
+  { title: "The Void Wanderer", author: "Cosmos Coderr", description: "Science Fiction/Fantasy.", filePath: "The-Void-Wanderer.pdf" },
+  { title: "The Silent Architect", author: "Cosmos Coderr", description: "Science Fiction/Mystery.", filePath: "The-silent-Achitect.pdf" },
+];
+
+const bookShrineInfo = {
+  about: "Book Shrine is a celestial digital library created by Kofi Fosu that houses unique works of fiction across multiple genres including romance, science fiction, fantasy, and adventure.",
+  mission: "To connect readers with extraordinary stories that transport them to new worlds and dimensions, offering an immersive reading experience unlike any other.",
+  creator: "Kofi Fosu, also known as Cosmos Coderr, is a visionary author and developer who crafts both stories and digital experiences.",
+  features: ["3D interactive book display", "Cosmic animated background", "AI-powered assistant", "Immersive portal transitions", "Curated collection of original works"],
+  genres: ["Romance", "Science Fiction", "Fantasy", "Adventure", "Mystery"],
+  contact: "cosmoscoderr@gmail.com",
+  founded: "The Book Shrine was established as a cosmic haven for literary exploration in 2023."
+};
+
+const introPage = document.getElementById("intro-page");
+const mainPage = document.getElementById("main-page");
+const startButton = document.getElementById("start-button");
+const bookGrid = document.querySelector(".book-grid");
+const searchInput = document.getElementById("search");
+const chatbotCore = document.getElementById("chatbot-core");
+const chatbotWindow = document.getElementById("chatbot-window");
+const chatbotInput = document.getElementById("chatbot-input");
+const sendButton = document.getElementById("send-button");
+const chatbotMessages = document.getElementById("chatbot-messages");
+const closeChatbot = document.getElementById("close-chatbot");
+const canvas = document.getElementById("cosmic-canvas");
+const ctx = canvas.getContext("2d");
+const clickSound = document.getElementById("click-sound");
+const universeSound = document.getElementById("universe-sound");
+
+// Cosmic Background
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const stars = [];
+for (let i = 0; i < 100; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 2 + 1,
+    speedX: (Math.random() - 0.5) * 0.3,
+    speedY: (Math.random() - 0.5) * 0.3,
+  });
 }
 
-body {
-  font-family: Arial, sans-serif;
-  background: #0a0015;
-  color: #fff;
-  overflow-x: hidden;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#fff";
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+    ctx.fill();
+    s.x += s.speedX;
+    s.y += s.speedY;
+    if (s.x < 0 || s.x > canvas.width) s.speedX *= -1;
+    if (s.y < 0 || s.y > canvas.height) s.speedY *= -1;
+  });
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+// Portal Transition with Sound
+startButton.addEventListener("click", () => {
+  clickSound.play();
+  universeSound.play();
+  const portalOverlay = document.getElementById("portal-overlay");
+  portalOverlay.classList.remove("hidden");
+  setTimeout(() => {
+    introPage.style.display = "none";
+    mainPage.style.display = "block";
+    mainPage.classList.remove("hidden"); // Ensure flexbox kicks in
+  }, 2000);
+});
+
+// Display Books
+function displayBooks(booksToShow) {
+  bookGrid.innerHTML = booksToShow.map(book => `
+    <div class="book-item">
+      <h2>${book.title}</h2>
+      <p>${book.author}</p>
+      <p>${book.description}</p>
+      <a href="${book.filePath}" target="_blank">Read Online</a>
+    </div>
+  `).join("");
+
+  const bookItems = document.querySelectorAll(".book-item");
+  bookItems.forEach(item => {
+    item.addEventListener("mousemove", (e) => {
+      const rect = item.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const rotateY = Math.min(Math.max(x / 10, -20), 20);
+      const rotateX = Math.min(Math.max(-y / 10, -20), 20);
+      item.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+    item.addEventListener("mouseleave", () => {
+      item.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg)";
+    });
+  });
 }
 
-#cosmic-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
+// Search Books
+function searchBooks() {
+  const query = searchInput.value.toLowerCase().trim();
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+  );
+  displayBooks(filteredBooks);
 }
 
-#intro-page {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
+// Chatbot Response Logic (unchanged for brevity)
+function chatbotResponse(message) {
+  const msg = message.toLowerCase().trim();
+  let response = "The Shrine hums with cosmic energy...";
+  if (msg === "hi" || msg === "hello") {
+    response = "Greetings, cosmic traveler. I am BookShrine, your guide. How may I assist?";
+  } else if (msg.includes("what is book shrine")) {
+    response = bookShrineInfo.about + " " + bookShrineInfo.mission;
+  }
+  return response;
 }
 
-.intro-logo {
-  width: 150px;
-  height: auto;
-  margin-bottom: 20px;
-  animation: logoGlow 2s infinite alternate;
+// Chatbot Interaction
+sendButton.addEventListener("click", () => {
+  clickSound.play();
+  const userMessage = chatbotInput.value.trim();
+  if (userMessage) {
+    addMessage(userMessage, "user");
+    chatbotInput.value = "";
+    setTimeout(() => {
+      const response = chatbotResponse(userMessage);
+      addMessage(response, "bot");
+    }, 1000);
+  }
+});
+
+chatbotInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    sendButton.click();
+  }
+});
+
+function addMessage(text, sender) {
+  const messageElement = document.createElement("div");
+  messageElement.textContent = text;
+  messageElement.style = sender === "user" 
+    ? "text-align: right; color: #00ffff; margin: 5px 0; white-space: pre-wrap;" 
+    : "text-align: left; color: #ddd; margin: 5px 0; white-space: pre-wrap;";
+  chatbotMessages.appendChild(messageElement);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
 
-@keyframes logoGlow {
-  0% { filter: drop-shadow(0 0 5px #ff00ff); }
-  100% { filter: drop-shadow(0 0 20px #00ffff); }
+// Chatbot Toggle and Drag
+chatbotCore.addEventListener("click", () => {
+  clickSound.play();
+  chatbotWindow.classList.toggle("hidden");
+  if (!chatbotWindow.classList.contains("hidden") && chatbotMessages.children.length === 0) {
+    addMessage("Welcome to BookShrine! How may I assist your cosmic journey?", "bot");
+  }
+});
+
+closeChatbot.addEventListener("click", () => {
+  clickSound.play();
+  chatbotWindow.classList.add("hidden");
+});
+
+// Draggable Chatbot (with touch support for iPhones)
+const draggableChat = document.getElementById("chatbot-draggable");
+let isDragging = false, currentX, currentY, initialX, initialY;
+
+// Mouse Events
+draggableChat.addEventListener("mousedown", startDragging);
+document.addEventListener("mousemove", drag);
+document.addEventListener("mouseup", stopDragging);
+
+// Touch Events for iPhone
+draggableChat.addEventListener("touchstart", startDraggingTouch, { passive: false });
+document.addEventListener("touchmove", dragTouch, { passive: false });
+document.addEventListener("touchend", stopDragging);
+
+function startDragging(e) {
+  if (e.target === chatbotCore) {
+    isDragging = true;
+    initialX = e.clientX - currentX;
+    initialY = e.clientY - currentY;
+  }
 }
 
-.cosmic-text {
-  text-align: center;
-  animation: pulseGlow 3s infinite alternate;
+function drag(e) {
+  if (isDragging) {
+    e.preventDefault();
+    currentX = e.clientX - initialX;
+    currentY = e.clientY - initialY;
+    setChatbotPosition(currentX, currentY);
+  }
 }
 
-.cosmic-text h1 {
-  font-size: 4rem;
-  text-shadow: 0 0 20px #ff00ff;
+function startDraggingTouch(e) {
+  if (e.target === chatbotCore) {
+    isDragging = true;
+    const touch = e.touches[0];
+    initialX = touch.clientX - currentX;
+    initialY = touch.clientY - currentY;
+  }
 }
 
-.highlight {
-  color: #00ffff;
-  text-shadow: 0 0 25px #ff00ff;
+function dragTouch(e) {
+  if (isDragging) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    currentX = touch.clientX - initialX;
+    currentY = touch.clientY - initialY;
+    setChatbotPosition(currentX, currentY);
+  }
 }
 
-.cosmic-text p {
-  font-size: 1.4rem;
-  max-width: 600px;
-  margin: 20px 0;
+function stopDragging() {
+  isDragging = false;
 }
 
-.warp-button {
-  background: linear-gradient(45deg, #ff00ff, #00ffff);
-  border: none;
-  padding: 15px 35px;
-  font-size: 1.5rem;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
-  animation: warpPulse 1.5s infinite;
+function setChatbotPosition(x, y) {
+  draggableChat.style.left = `${x}px`;
+  draggableChat.style.top = `${y}px`;
+  draggableChat.style.bottom = "auto";
+  draggableChat.style.right = "auto";
 }
 
-@keyframes warpPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
+// Initial Position
+currentX = window.innerWidth - 70; // Right: 20px
+currentY = window.innerHeight - 70; // Bottom: 20px
+setChatbotPosition(currentX, currentY);
 
-@keyframes pulseGlow {
-  0% { text-shadow: 0 0 10px #ff00ff; }
-  100% { text-shadow: 0 0 30px #00ffff; }
-}
+// Initial Display
+displayBooks(books);
 
-#portal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-}
-
-.warp-effect {
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, #00ffff, #ff00ff, transparent);
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: warpExpand 2s forwards;
-}
-
-@keyframes warpExpand {
-  0% { transform: translate(-50%, -50%) scale(0.1) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) scale(4) rotate(540deg); opacity: 0; }
-}
-
-#main-page {
-  position: relative;
-  z-index: 5;
-  flex: 1;
-}
-
-header {
-  padding: 30px;
-  text-align: center;
-}
-
-.neon-title {
-  font-size: 3rem;
-  text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-  animation: neonFlicker 4s infinite;
-}
-
-@keyframes neonFlicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
-}
-
-.cosmic-input {
-  width: 70%;
-  max-width: 500px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid #00ffff;
-  border-radius: 20px;
-  color: #fff;
-  font-size: 1.1rem;
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-}
-
-.book-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
-  padding: 40px;
-  perspective: 800px;
-}
-
-.book-item {
-  background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
-  border: 1px solid #00ffff;
-  border-radius: 10px;
-  width: 200px;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.book-item:hover {
-  transform: translateZ(20px) rotateY(10deg);
-  box-shadow: 0 0 40px rgba(0, 255, 255, 0.8);
-}
-
-.book-item h2 {
-  font-size: 1.2rem;
-  color: #00ffff;
-  text-shadow: 0 0 10px #ff00ff;
-}
-
-.book-item p {
-  font-size: 0.9rem;
-  color: #ddd;
-}
-
-.book-item a {
-  color: #00ffff;
-  text-decoration: none;
-  font-weight: bold;
-  text-shadow: 0 0 10px #ff00ff;
-}
-
-footer {
-  background: rgba(255, 0, 255, 0.1);
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-  position: relative;
-  z-index: 10;
-  margin-top: auto;
-}
-
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.donation-container {
-  margin-top: 10px;
-}
-
-.donation-container p {
-  color: #00ffff;
-  font-size: 1rem;
-}
-
-.donate-link {
-  display: inline-block;
-}
-
-.donate-img {
-  width: 100px;
-  height: auto;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.donate-img:hover {
-  transform: scale(1.1);
-}
-
-.cosmic-chat {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  cursor: move;
-}
-
-.chat-orb {
-  width: 50px;
-  height: 50px;
-  background: radial-gradient(circle, #00ffff, #ff00ff);
-  border-radius: 50%;
-  cursor: pointer;
-  animation: orbGlow 2s infinite;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
-}
-
-@keyframes orbGlow {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-.cosmic-panel {
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid #00ffff;
-  border-radius: 10px;
-  width: 300px;
-  padding: 15px;
-  position: absolute;
-  bottom: 70px;
-  right: 0;
-  box-shadow: 0 0 25px rgba(255, 0, 255, 0.6);
-}
-
-.close-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #ff00ff;
-  color: #00ffff;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-}
-
-.close-button:hover {
-  background: #00ffff;
-  color: #ff00ff;
-}
-
-.message-field {
-  height: 200px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-.chat-input-container {
-  display: flex;
-  gap: 10px;
-}
-
-.cosmic-button {
-  background: #ff00ff;
-  color: #00ffff;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-}
-
-.hidden {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .cosmic-text h1 { font-size: 2.5rem; }
-  .cosmic-text p { font-size: 1.2rem; }
-  .warp-button { font-size: 1.2rem; padding: 10px 25px; }
-  .intro-logo { width: 120px; }
-  .neon-title { font-size: 2rem; }
-  .cosmic-input { width: 90%; }
-  .book-item { width: 160px; }
-  .cosmic-panel { width: 250px; }
-}
-
-@media (max-width: 480px) {
-  .cosmic-text h1 { font-size: 2rem; }
-  .cosmic-text p { font-size: 1rem; }
-  .intro-logo { width: 100px; }
-  .book-item { width: 140px; }
-}
+// Resize Handler
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  currentX = window.innerWidth - 70;
+  currentY = window.innerHeight - 70;
+  if (!isDragging) {
+    setChatbotPosition(currentX, currentY);
+  }
+});
