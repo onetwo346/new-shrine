@@ -79,6 +79,7 @@ startButton.addEventListener("click", () => {
     introPage.style.display = "none";
     mainPage.style.display = "block";
     mainPage.classList.remove("hidden"); // Ensure flexbox kicks in
+    portalOverlay.classList.add("hidden");
   }, 2000);
 });
 
@@ -109,7 +110,19 @@ function displayBooks(booksToShow) {
   });
 }
 
-// Search Books
+// Search Books (with debouncing for performance)
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 function searchBooks() {
   const query = searchInput.value.toLowerCase().trim();
   const filteredBooks = books.filter(book =>
@@ -117,6 +130,8 @@ function searchBooks() {
   );
   displayBooks(filteredBooks);
 }
+
+searchBooks = debounce(searchBooks, 300); // Debounce search to prevent lag
 
 // Chatbot Response Logic (unchanged for brevity)
 function chatbotResponse(message) {
@@ -160,7 +175,7 @@ function addMessage(text, sender) {
   chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
 
-// Chatbot Toggle and Drag
+// Chatbot Toggle and Drag (Optimized for Smoothness)
 chatbotCore.addEventListener("click", () => {
   clickSound.play();
   chatbotWindow.classList.toggle("hidden");
@@ -174,52 +189,37 @@ closeChatbot.addEventListener("click", () => {
   chatbotWindow.classList.add("hidden");
 });
 
-// Draggable Chatbot (with touch support for iPhones)
+// Draggable Chatbot (Optimized for Smoothness and All Devices)
 const draggableChat = document.getElementById("chatbot-draggable");
 let isDragging = false, currentX, currentY, initialX, initialY;
 
-// Mouse Events
-draggableChat.addEventListener("mousedown", startDragging);
-document.addEventListener("mousemove", drag);
-document.addEventListener("mouseup", stopDragging);
-
-// Touch Events for iPhone
-draggableChat.addEventListener("touchstart", startDraggingTouch, { passive: false });
-document.addEventListener("touchmove", dragTouch, { passive: false });
-document.addEventListener("touchend", stopDragging);
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
 
 function startDragging(e) {
   if (e.target === chatbotCore) {
+    e.preventDefault(); // Prevent text selection
     isDragging = true;
-    initialX = e.clientX - currentX;
-    initialY = e.clientY - currentY;
+    initialX = (e.type.includes('touch') ? e.touches[0].clientX : e.clientX) - currentX;
+    initialY = (e.type.includes('touch') ? e.touches[0].clientY : e.clientY) - currentY;
   }
 }
 
 function drag(e) {
   if (isDragging) {
     e.preventDefault();
-    currentX = e.clientX - initialX;
-    currentY = e.clientY - initialY;
-    setChatbotPosition(currentX, currentY);
-  }
-}
-
-function startDraggingTouch(e) {
-  if (e.target === chatbotCore) {
-    isDragging = true;
-    const touch = e.touches[0];
-    initialX = touch.clientX - currentX;
-    initialY = touch.clientY - currentY;
-  }
-}
-
-function dragTouch(e) {
-  if (isDragging) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    currentX = touch.clientX - initialX;
-    currentY = touch.clientY - initialY;
+    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    currentX = clientX - initialX;
+    currentY = clientY - initialY;
     setChatbotPosition(currentX, currentY);
   }
 }
@@ -229,11 +229,26 @@ function stopDragging() {
 }
 
 function setChatbotPosition(x, y) {
-  draggableChat.style.left = `${x}px`;
-  draggableChat.style.top = `${y}px`;
+  // Constrain within viewport
+  const maxX = window.innerWidth - draggableChat.offsetWidth;
+  const maxY = window.innerHeight - draggableChat.offsetHeight;
+  currentX = Math.max(0, Math.min(x, maxX));
+  currentY = Math.max(0, Math.min(y, maxY));
+  draggableChat.style.left = `${currentX}px`;
+  draggableChat.style.top = `${currentY}px`;
   draggableChat.style.bottom = "auto";
   draggableChat.style.right = "auto";
 }
+
+// Mouse Events
+draggableChat.addEventListener("mousedown", startDragging);
+document.addEventListener("mousemove", throttle(drag, 16)); // 60 FPS throttle
+document.addEventListener("mouseup", stopDragging);
+
+// Touch Events for iPhones and Tablets
+draggableChat.addEventListener("touchstart", startDragging, { passive: false });
+document.addEventListener("touchmove", throttle(drag, 16), { passive: false });
+document.addEventListener("touchend", stopDragging);
 
 // Initial Position
 currentX = window.innerWidth - 70; // Right: 20px
@@ -243,13 +258,16 @@ setChatbotPosition(currentX, currentY);
 // Initial Display
 displayBooks(books);
 
-// Resize Handler
+// Resize and Orientation Handler
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  currentX = window.innerWidth - 70;
-  currentY = window.innerHeight - 70;
   if (!isDragging) {
+    currentX = window.innerWidth - 70;
+    currentY = window.innerHeight - 70;
     setChatbotPosition(currentX, currentY);
   }
 });
+
+// Prevent default touch actions on chatbot to improve dragging
+draggableChat.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
