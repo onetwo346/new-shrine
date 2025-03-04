@@ -5,8 +5,8 @@ const books = [
   { title: "Whispers of the Heart", author: "Kofi Fosu", description: "A classic romance full of passion.", filePath: "Whispers-of-the-Heart.pdf" },
   { title: "Ancestors Hammer", author: "Kofi Fosu", description: "Fantasy Adventure.", filePath: "ancestor-hammer.pdf" },
   { title: "Deeper than Ocean", author: "Kofi Fosu", description: "Romance.", filePath: "Deeper-than-Ocean.pdf" },
-  { title: "Heaven Bound (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "heaven-bound.pdf" },
-  { title: "Heaven Bound (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "heaven-bound.pdf" },
+  { title: "The Algorithm Of Souls", author: "Kofi Fosu", description: "A Sci-Fi, Adventure, Metaphysical.", filePath: "The-Algorithm-Of-Souls.pdf" },
+  { title: "Heaven Bound (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi, Adventure Thrilling Series.", filePath: "heaven-bound.pdf" },
 
 
   
