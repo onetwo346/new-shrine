@@ -210,10 +210,9 @@ footer {
   padding: 20px;
   text-align: center;
   width: 100%;
-  position: absolute; /* Changed to absolute for computers */
-  bottom: 0; /* Locks to bottom of viewport */
-  z-index: 10; /* Ensure it’s above other content */
-  /* Removed margin-top: auto since we’re using position: absolute */
+  position: absolute; /* Locks to bottom for computers */
+  bottom: 0;
+  z-index: 10;
 }
 
 .footer-content {
@@ -253,6 +252,7 @@ footer {
   right: 20px;
   cursor: move;
   z-index: 15; /* Ensure it’s above everything */
+  touch-action: none; /* Improve touch dragging on all devices */
 }
 
 .chat-orb {
