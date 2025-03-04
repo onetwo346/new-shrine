@@ -10,8 +10,7 @@ const books = [
   { title: "The Last Echo (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "The-Last-echo.pdf" },
   { title: "The Void Wanderer", author: "Cosmos Coderr", description: "Science Fiction/Fantasy.", filePath: "The-Void-Wanderer.pdf" },
   { title: "The Silent Architect", author: "Cosmos Coderr", description: "Science Fiction/Mystery.", filePath: "The-silent-Achitect.pdf" },
-  { title: "The Algorithm Of Souls", author: "Kofi Fosu", description: "Science Metaphysical, Thriller.", filePath: "The-Algorithm-Of-Souls.pdf" }.
-];
+  ];
 
 const bookShrineInfo = {
   about: "Book Shrine is a celestial digital library created by Kofi Fosu that houses unique works of fiction across multiple genres including romance, science fiction, fantasy, and adventure.",
