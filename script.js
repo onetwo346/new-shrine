@@ -175,14 +175,18 @@ function addMessage(text, sender) {
   chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 }
 
-// Chatbot Toggle and Drag (Optimized for Smoothness)
-chatbotCore.addEventListener("click", () => {
+// Chatbot Toggle and Drag (Optimized for Smoothness and iPhone Taps)
+chatbotCore.addEventListener("click", handleChatbotToggle); // Mouse/click for desktops
+chatbotCore.addEventListener("touchstart", handleChatbotToggle, { passive: false }); // Tap for iPhones
+
+function handleChatbotToggle(e) {
+  e.preventDefault(); // Prevent default touch behavior
   clickSound.play();
   chatbotWindow.classList.toggle("hidden");
   if (!chatbotWindow.classList.contains("hidden") && chatbotMessages.children.length === 0) {
     addMessage("Welcome to BookShrine! How may I assist your cosmic journey?", "bot");
   }
-});
+}
 
 closeChatbot.addEventListener("click", () => {
   clickSound.play();
@@ -269,5 +273,5 @@ window.addEventListener("resize", () => {
   }
 });
 
-// Prevent default touch actions on chatbot to improve dragging
+// Prevent default touch actions on chatbot to improve dragging and tapping
 draggableChat.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
