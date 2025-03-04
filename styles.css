@@ -210,10 +210,10 @@ footer {
   padding: 20px;
   text-align: center;
   width: 100%;
-  position: relative;
-  z-index: 10;
-  margin-top: auto; /* Sticks to bottom when main-page is flex */
-  /* Removed flex-shrink: 0 to simplify — it was causing issues on laptops */
+  position: absolute; /* Changed to absolute for computers */
+  bottom: 0; /* Locks to bottom of viewport */
+  z-index: 10; /* Ensure it’s above other content */
+  /* Removed margin-top: auto since we’re using position: absolute */
 }
 
 .footer-content {
@@ -338,6 +338,12 @@ footer {
   .cosmic-input { width: 90%; }
   .book-item { width: 160px; }
   .cosmic-panel { width: 250px; }
+  /* Ensure footer stays relative on smaller screens (iPhones) */
+  footer {
+    position: relative;
+    bottom: auto;
+    margin-top: auto;
+  }
 }
 
 @media (max-width: 480px) {
@@ -345,4 +351,10 @@ footer {
   .cosmic-text p { font-size: 1rem; }
   .intro-logo { width: 100px; }
   .book-item { width: 140px; }
+  /* Ensure footer stays relative on smaller screens (iPhones) */
+  footer {
+    position: relative;
+    bottom: auto;
+    margin-top: auto;
+  }
 }
