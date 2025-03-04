@@ -174,34 +174,19 @@ closeChatbot.addEventListener("click", () => {
   chatbotWindow.classList.add("hidden");
 });
 
-// Draggable Chatbot - with Touch Support
+// Draggable Chatbot
 const draggableChat = document.getElementById("chatbot-draggable");
 let isDragging = false, currentX, currentY, initialX, initialY;
-let xOffset = 0, yOffset = 0;
 
-// Mouse Events (Desktop)
 draggableChat.addEventListener("mousedown", startDragging);
 document.addEventListener("mousemove", drag);
 document.addEventListener("mouseup", stopDragging);
 
-// Touch Events (Mobile)
-draggableChat.addEventListener("touchstart", startDraggingTouch);
-document.addEventListener("touchmove", dragTouch);
-document.addEventListener("touchend", stopDragging);
-
 function startDragging(e) {
-  if (e.target === chatbotCore || e.target.closest("#chatbot-core")) {
+  if (e.target === chatbotCore) {
     isDragging = true;
-    initialX = e.clientX - xOffset;
-    initialY = e.clientY - yOffset;
-  }
-}
-
-function startDraggingTouch(e) {
-  if (e.target === chatbotCore || e.target.closest("#chatbot-core")) {
-    isDragging = true;
-    initialX = e.touches[0].clientX - xOffset;
-    initialY = e.touches[0].clientY - yOffset;
+    initialX = e.clientX - currentX;
+    initialY = e.clientY - currentY;
   }
 }
 
@@ -210,49 +195,21 @@ function drag(e) {
     e.preventDefault();
     currentX = e.clientX - initialX;
     currentY = e.clientY - initialY;
-    xOffset = currentX;
-    yOffset = currentY;
-    
-    // Set position with transforms for better performance
-    setTranslate(currentX, currentY, draggableChat);
+    draggableChat.style.left = `${currentX}px`;
+    draggableChat.style.top = `${currentY}px`;
+    draggableChat.style.bottom = "auto";
+    draggableChat.style.right = "auto";
   }
-}
-
-function dragTouch(e) {
-  if (isDragging) {
-    e.preventDefault();
-    currentX = e.touches[0].clientX - initialX;
-    currentY = e.touches[0].clientY - initialY;
-    xOffset = currentX;
-    yOffset = currentY;
-    
-    // Set position with transforms for better performance
-    setTranslate(currentX, currentY, draggableChat);
-  }
-}
-
-function setTranslate(xPos, yPos, el) {
-  // Keep within viewport bounds
-  const maxX = window.innerWidth - el.offsetWidth;
-  const maxY = window.innerHeight - el.offsetHeight;
-  
-  xPos = Math.min(Math.max(0, xPos), maxX);
-  yPos = Math.min(Math.max(0, yPos), maxY);
-  
-  el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-  el.style.position = "fixed";
-  el.style.bottom = "auto";
-  el.style.right = "auto";
 }
 
 function stopDragging() {
   isDragging = false;
 }
 
-// Set initial position
-xOffset = window.innerWidth - 70;
-yOffset = window.innerHeight - 70;
-setTranslate(xOffset, yOffset, draggableChat);
+currentX = window.innerWidth - 70; // Initial right: 20px
+currentY = window.innerHeight - 70; // Initial bottom: 20px
+draggableChat.style.left = `${currentX}px`;
+draggableChat.style.top = `${currentY}px`;
 
 // Initial Display
 displayBooks(books);
@@ -261,13 +218,10 @@ displayBooks(books);
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  
-  // Reposition chatbot in case it's off-screen after resize
-  const maxX = window.innerWidth - draggableChat.offsetWidth;
-  const maxY = window.innerHeight - draggableChat.offsetHeight;
-  
-  xOffset = Math.min(xOffset, maxX);
-  yOffset = Math.min(yOffset, maxY);
-  
-  setTranslate(xOffset, yOffset, draggableChat);
+  currentX = window.innerWidth - 70;
+  currentY = window.innerHeight - 70;
+  if (!isDragging) {
+    draggableChat.style.left = `${currentX}px`;
+    draggableChat.style.top = `${currentY}px`;
+  }
 });
