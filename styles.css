@@ -131,8 +131,7 @@ body {
 #main-page:not(.hidden) {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure full viewport height */
-  height: auto; /* Allow growth for taller content */
+  min-height: 100vh; /* Ensure full viewport height for computers */
 }
 
 header {
@@ -214,7 +213,7 @@ footer {
   position: relative;
   z-index: 10;
   margin-top: auto; /* Sticks to bottom when main-page is flex */
-  flex-shrink: 0; /* Prevents footer from shrinking */
+  /* Removed flex-shrink: 0 to simplify — it was causing issues on laptops */
 }
 
 .footer-content {
