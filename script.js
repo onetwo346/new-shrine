@@ -7,7 +7,7 @@ const books = [
   { title: "Deeper than Ocean", author: "Kofi Fosu", description: "Romance.", filePath: "Deeper-than-Ocean.pdf" },
   { title: "The Algorithm Of Souls", author: "Kofi Fosu", description: "A Sci-Fi, Adventure, Metaphysical.", filePath: "The-Algorithm-Of-Souls.pdf" },
   { title: "Heaven Bound (Book 1)", author: "Kofi Fosu", description: "A Sci-Fi, Adventure Thrilling Series.", filePath: "heaven-bound.pdf" },
-  { title: "Songs of the ONE (book2)", author: "Kofi Fosu", description: "Proverbs,WiseSaying.", filePath: "River of Time.pdf" },
+  { title: "River Of Time", author: "Kofi Fosu", description: "Proverbs.", filePath: "River of Time.pdf" },
 
   
   { title: "Heaven Bound (Book 2)", author: "Kofi Fosu", description: "A Sci-Fi Adventure Thrilling Series.", filePath: "heaven-bound2.pdf" },
